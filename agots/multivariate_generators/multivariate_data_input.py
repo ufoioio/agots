@@ -7,12 +7,16 @@ from agots.multivariate_generators.multivariate_trend_outlier_generator import M
 from agots.multivariate_generators.multivariate_variance_outlier_generator import MultivariateVarianceOutlierGenerator
 from agots.multivariate_generators.multivariate_freq_outlier_generator import MultivariateFreqOutlierGenerator
 
+from agots.generators.extreme_outlier_generator import ExtremeOutlierGenerator
+from agots.generators.shift_outlier_generator import ShiftOutlierGenerator
+from agots.generators.trend_outlier_generator import TrendOutlierGenerator
+from agots.generators.variance_outlier_generator import VarianceOutlierGenerator
+
 INITIAL_VALUE_MIN = 0
 INITIAL_VALUE_MAX = 1
 
-
 class MultivariateDataInput:
-    def __init__(self, df, shift_config=None, behavior=None, behavior_config=None):
+    def __init__(self, df):
         """Create multivariate time series using outlier generators
         :param stream_length: number of values in each time series
         :param n: number of time series at all
@@ -23,20 +27,9 @@ class MultivariateDataInput:
 
         # n, k, stream_length
 
-        if not shift_config:
-            self.shift_config = {}
-            self.max_shift = 0
-        else:
-            self.shift_config = shift_config
-            self.max_shift = max(list(self.shift_config.values()))
-        self.behavior = behavior
-        self.behavior_config = behavior_config if behavior_config is not None else {}
-
         self.data = df
         self.N = len(df.columns)
         self.outlier_data = pd.DataFrame()
-
-        assert 0 not in self.shift_config.keys(), 'The origin time series cannot be shifted in time'
 
     def add_outliers(self, config):
         """Adds outliers based on the given configuration to the base line
